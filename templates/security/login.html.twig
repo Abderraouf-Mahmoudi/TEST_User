@@ -1,0 +1,79 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block body %}
+<!-- Page Header Start -->
+    <div class="container-fluid page-header mb-5 p-0" style="background-image: url(uploads/images/bck.jpg);">
+        <div class="container-fluid page-header-inner py-5">
+            <div class="container text-center">
+                <h1 class="display-3 text-white mb-3 animated slideInDown">Welcome</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center text-uppercase">
+                        <li class="breadcrumb-item text-white active" aria-current="page">Sign In</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <form method="post" class="form-signin">
+                {% if error %}
+                    <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                {% if app.user %}
+                    <div class="mb-3">
+                        You are logged in as {{ app.user.Nom }}, <a href="{{ path('app_logout') }}">Logout</a>
+                    </div>
+                {% endif %}
+
+                <h1 class="h3 mb-3 font-weight-normal text-center">Please sign in</h1>
+                
+                <div class="form-floating mb-3">
+                    <input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control" placeholder=" " required autofocus>
+                    <label for="inputEmail">Email</label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" name="password" id="inputPassword" class="form-control" placeholder=" " required>
+                    <label for="inputPassword">Password</label>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div class="text-center">
+                    <button class="btn btn-lg btn-primary" type="submit">
+                        Sign in
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const loginForm = document.querySelector('.form-signin');
+        loginForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            Swal.fire({
+                position: "center",
+                icon: "info",
+                title: "Checking your credentials...",
+                showConfirmButton: false,
+                timer: 1500
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    loginForm.submit();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

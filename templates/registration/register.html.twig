@@ -1,0 +1,104 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block body %}
+
+
+<!-- Page Header Start -->
+    <div class="container-fluid page-header mb-5 p-0" style="background-image: url(uploads/images/bck.jpg);">
+        <div class="container-fluid page-header-inner py-5">
+            <div class="container text-center">
+                <h1 class="display-3 text-white mb-3 animated slideInDown">Sign Up</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center text-uppercase">
+                        <li class="breadcrumb-item text-white active" aria-current="page">Sign Up</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Page Header End -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <h1 class="text-center mb-4">Register</h1>
+                
+                {{ form_errors(registrationForm) }}
+
+                {{ form_start(registrationForm, {'attr': {'class': 'g-3','enctype': 'multipart/form-data'}}) }}
+                    <div class="form-floating mb-3">
+                        {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control', 'id': 'floatingNom', 'placeholder': 'Nom'}}) }}
+                        {{ form_label(registrationForm.nom, 'Nom', {'label_attr': {'for': 'floatingNom'}}) }}
+                        {{ form_errors(registrationForm.nom) }}
+                    </div>
+                    <div class="form-floating mb-3">
+                        {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control', 'id': 'floatingPrenom', 'placeholder': 'Prenom'}}) }}
+                        {{ form_label(registrationForm.prenom, 'Prenom', {'label_attr': {'for': 'floatingPrenom'}}) }}
+                        {{ form_errors(registrationForm.prenom) }}
+                    </div>
+                    <div class="form-floating mb-3">
+                        {{ form_widget(registrationForm.dateNaissance, {'attr': {'class': 'form-control', 'id': 'floatingDateNaissance', 'placeholder': 'Date de Naissance'}}) }}
+                        {{ form_label(registrationForm.dateNaissance, 'Date de Naissance', {'label_attr': {'for': 'floatingDateNaissance'}}) }}
+                        {{ form_errors(registrationForm.dateNaissance) }}
+                    </div>
+                    <div class="form-floating mb-3">
+                        {{ form_widget(registrationForm.numTel, {'attr': {'class': 'form-control', 'id': 'floatingNumTel', 'placeholder': 'Numéro de Téléphone'}}) }}
+                        {{ form_label(registrationForm.numTel, 'Numéro de Téléphone', {'label_attr': {'for': 'floatingNumTel'}}) }}
+                        {{ form_errors(registrationForm.numTel) }}
+                    </div>
+                    <div class="form-floating mb-3">
+                        {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'id': 'floatingEmail', 'placeholder': 'Email'}}) }}
+                        {{ form_label(registrationForm.email, 'Email', {'label_attr': {'for': 'floatingEmail'}}) }}
+                        {{ form_errors(registrationForm.email) }}
+                    </div>
+                    <div class="form-floating mb-3">
+                        {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'id': 'floatingPassword', 'placeholder': 'Password'}}) }}
+                        {{ form_label(registrationForm.plainPassword, 'Password', {'label_attr': {'for': 'floatingPassword'}}) }}
+                        {{ form_errors(registrationForm.plainPassword) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_widget(registrationForm.imageUser, {
+                            'attr': {'class': 'form-control'}
+                        }) }}
+                        {{ form_label(registrationForm.imageUser, 'Profile Image', {
+                            'label_attr': {'class': 'form-label'}
+                        }) }}
+                        {{ form_errors(registrationForm.imageUser) }}
+                    </div>
+                    <div class="form-check mb-4">
+                        {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input', 'id': 'floatingAgreeTerms'}}) }}
+                        {{ form_label(registrationForm.agreeTerms, 'Agree to Terms', {'label_attr': {'class': 'form-check-label', 'for': 'floatingAgreeTerms'}}) }}
+                        {{ form_errors(registrationForm.agreeTerms) }}
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                {{ form_end(registrationForm) }}
+            </div>
+        </div>
+    </div>
+    {% block javascripts %}
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Stop the form from submitting immediately
+
+            // Show SweetAlert
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Your Account Has Been Created",
+                showConfirmButton: false,
+                timer: 1500
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.timer) {
+                    // When the timer runs out, submit the form
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

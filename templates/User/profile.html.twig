@@ -1,0 +1,220 @@
+{% extends 'baseFront.html.twig' %}
+
+{% block body %}
+<style>
+    /* Existing styles for profile container, image, and overlay */
+    .profile-container {
+        display: flex;
+        align-items: center; 
+        justify-content: flex-start;
+        gap: 2rem;
+    }
+    .profile-image-container {
+        position: relative;
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+    #profileImagePreview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .profile-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color:rgba(0,0,255,0.3);
+        opacity: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.25s;
+        border-radius: 50%;
+    }
+    .profile-image-container:hover .profile-overlay {
+        opacity: 1;
+    }
+    .btn-square {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        color: white;
+        font-size: 24px;
+    }
+    .form-container {
+        flex-grow: 1;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function triggerFileInput() {
+    document.getElementById('imageUser').click();
+}
+function previewImage(event) {
+    var reader = new FileReader();
+    reader.onload = function() {
+        var output = document.getElementById('profileImagePreview');
+        output.src = reader.result;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+}
+
+// Validation functions
+function validateNom() {
+    const nom = document.getElementById('floatingNom');
+    const errorNom = document.getElementById('errorNom');
+    if (!nom.value.match(/^[a-zA-Z\s]*$/)) {
+        errorNom.textContent = 'Le nom ne doit contenir que des lettres et des espaces.';
+        return false;
+    } else {
+        errorNom.textContent = '';
+        return true;
+    }
+}
+function validatePrenom() {
+    const prenom = document.getElementById('floatingPrenom');
+    const errorPrenom = document.getElementById('errorPrenom');
+    if (!prenom.value.match(/^[a-zA-Z\s]*$/)) {
+        errorPrenom.textContent = 'Le prénom ne doit contenir que des lettres et des espaces.';
+        return false;
+    } else {
+        errorPrenom.textContent = '';
+        return true;
+    }
+}
+function validateEmail() {
+    const email = document.getElementById('floatingEmail');
+    const errorEmail = document.getElementById('errorEmail');
+    if (!email.value.match(/^\S+@\S+\.\S+$/)) {
+        errorEmail.textContent = 'Veuillez entrer une adresse email valide.';
+        return false;
+    } else {
+        errorEmail.textContent = '';
+        return true;
+    }
+}
+function validateDateNaissance() {
+    const dateNaissance = document.getElementById('floatingDateNaissance');
+    const errorDateNaissance = document.getElementById('errorDateNaissance');
+    const currentDate = new Date();
+    const dob = new Date(dateNaissance.value);
+    const ageDiff = new Date(currentDate - dob);
+    const age = ageDiff.getUTCFullYear() - 1970;
+    if (age < 18) {
+        errorDateNaissance.textContent = 'Vous devez avoir au moins 18 ans.';
+        return false;
+    } else {
+        errorDateNaissance.textContent = '';
+        return true;
+    }
+}
+function validateNumTel() {
+    const numTel = document.getElementById('floatingNumTel');
+    const errorNumTel = document.getElementById('errorNumTel');
+    if (!numTel.value.match(/^[0-9]{8}$/)) {
+        errorNumTel.textContent = 'Le numéro de téléphone doit contenir exactement 8 chiffres.';
+        return false;
+    } else {
+        errorNumTel.textContent = '';
+        return true;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+const form = document.querySelector('form');
+form.addEventListener('submit', function(event) {
+event.preventDefault();
+let isValid = validateNom() && validatePrenom() && validateEmail() && validateDateNaissance() && validateNumTel();
+    if (isValid) {
+        Swal.fire({
+            title: 'Êtes-vous sûr?',
+            text: "Vous ne pourrez pas revenir en arrière!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui, sauvegardez-le!',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    }
+});
+});
+</script>
+
+<!-- Page Header -->
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(uploads/images/bck.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Profile</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Profile</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Start of Form -->
+<div class="container mt-5">
+    <form method="post" action="{{ path('save_profile') }}" enctype="multipart/form-data">
+        <div class="profile-container">
+            <!-- Image Container -->
+            <div class="profile-image-container">
+                <img id="profileImagePreview" src="{{ asset('uploads/images/' ~ user.imageUser) }}" alt="User Image">
+                <input type="file" id="imageUser" name="imageUser" style="display:none" onchange="previewImage(event)" accept="image/*">
+                <div class="profile-overlay">
+                    <button type="button" class="btn btn-square" onclick="triggerFileInput()">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Form Container -->
+            <div class="form-container">
+                <h1 class="text-center mb-4">Informations Personnelles</h1>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" name="nom" id="floatingNom" placeholder="Nom" value="{{ user.nom }}" required oninput="validateNom()">
+                    <label for="floatingNom">Nom</label>
+                    <div id="errorNom" class="text-danger"></div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" name="prenom" id="floatingPrenom" placeholder="Prénom" value="{{ user.prenom }}" required oninput="validatePrenom()">
+                    <label for="floatingPrenom">Prénom</label>
+                    <div id="errorPrenom" class="text-danger"></div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" name="email" id="floatingEmail" placeholder="Email" value="{{ user.email }}" required oninput="validateEmail()">
+                    <label for="floatingEmail">Email</label>
+                    <div id="errorEmail" class="text-danger"></div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="date" class="form-control" name="dateNaissance" id="floatingDateNaissance" placeholder="Date de Naissance" value="{{ user.dateNaissance|date('Y-m-d') }}" required oninput="validateDateNaissance()">
+                    <label for="floatingDateNaissance">Date de Naissance</label>
+                    <div id="errorDateNaissance" class="text-danger"></div>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" name="numTel" id="floatingNumTel" placeholder="Numéro de téléphone" value="{{ user.numTel }}" required oninput="validateNumTel()">
+                    <label for="floatingNumTel">Numéro de téléphone</label>
+                    <div id="errorNumTel" class="text-danger"></div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
